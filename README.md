@@ -10,3 +10,5 @@ from http://postd.cc/vagrant_with_docker_how_to_set_up_postgres_elasticsearch_an
    
 2. delete "redis" and "elasticsearch" container.
 
+3. 
+
