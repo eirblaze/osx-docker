@@ -1,0 +1,25 @@
+VAGRANTFILE_API_VERSION = "2"
+ 
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|  
+  config.vm.box = "hashicorp/precise64"
+
+  config.vm.provider "virtualbox" do |v|
+    v.check_guest_additions = false
+    v.functional_vboxsf = false
+  end
+
+  config.vm.provision "docker"
+
+  config.vm.provision "shell", :inline => <<EOS
+service docker stop
+sed -ie 's/${DOCKER_OPTS}/--storage-driver=devicemapper/' /etc/default/docker
+service docker start
+EOS
+
+  config.vm.provision "shell", inline:
+    "ps aux | grep 'sshd:' | awk '{print $2}' | xargs kill"
+
+  config.vm.network :forwarded_port, guest: 5432, host: 5432
+
+end
+
