@@ -6,21 +6,6 @@ $ports = [
 VAGRANTFILE_API_VERSION = "2"  
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  $ports.each do |p|
-    config.vm.define "postgres-#{p[:host]}" do |v|
-      v.vm.provider "docker" do |d|
-        d.image = "postgres:9.2"
-        d.ports = ["#{p[:host]}:#{p[:guest]}"]
-        d.env = {
-          :POSTGRES_USER => "admin",
-          :POSTGRES_PASSWORD => "pw",
-        }
-        d.vagrant_vagrantfile = "./Vagrantfile"
-        d.vagrant_machine = "base"
-      end
-    end
-  end
-
   config.vm.define "base" do |h|
     h.vm.box = "hashicorp/precise64"
     h.vm.provider "virtualbox" do |v|
@@ -40,6 +25,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     $ports.each do |p|
       h.vm.network :forwarded_port, guest: p[:host], host: p[:host]
+    end
+  end
+
+  $ports.each do |p|
+    config.vm.define "postgres-#{p[:host]}" do |v|
+      v.vm.provider "docker" do |d|
+        d.image = "postgres:9.2"
+        d.ports = ["#{p[:host]}:#{p[:guest]}"]
+        d.env = {
+          :POSTGRES_USER => "admin",
+          :POSTGRES_PASSWORD => "pw",
+        }
+        d.vagrant_vagrantfile = "./Vagrantfile"
+        d.vagrant_machine = "base"
+      end
     end
   end
 end
