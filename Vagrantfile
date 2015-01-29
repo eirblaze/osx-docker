@@ -1,7 +1,7 @@
-$ports = [
-  { guest: 5432, host: 5432 },
-  { guest: 5432, host: 5433 },
-]
+$ports=ENV['PORT_MAPPING'].split(',').map { |mapping|
+  host, guest = mapping.split(':')
+  {:host => host, :guest => guest}
+}
 
 VAGRANTFILE_API_VERSION = "2"  
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
